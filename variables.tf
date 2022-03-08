@@ -12,6 +12,13 @@ variable "mongodbatlas_private_key" {
   default     = ""
 }
 
+variable "cloud_provider" {
+  description = "provider to use"
+  type        = string
+  default     = "AWS"
+}
+
+
 variable "project_name" {
   description = "The name of the project you want to create"
   type        = string
@@ -41,6 +48,12 @@ variable "region" {
   description = "The AWS region-name that the cluster will be deployed on"
   type        = string
   default     = "EU_WEST_1"
+}
+
+variable "aws_region" {
+  description = "The AWS region-name that the AWS KMS KEY, Private Link, and other resides on"
+  type        = string
+  default     = "eu-west-1"
 }
 
 variable "cluster_name" {
@@ -224,4 +237,214 @@ variable "auto_scaling_compute_scale_down_enabled" {
   description = "Specifies whether cluster tier auto-scaling is enabled. The default is false. Set to true to enable cluster tier to scale down."
   type        = bool
   default     = false
+}
+
+variable "encryption_at_rest_provider" {
+  description = "Possible values are AWS, GCP, AZURE or NONE. Only needed if you desire to manage the keys, see Encryption at Rest using Customer Key Management for complete documentation. You must configure encryption at rest for the Atlas project before enabling it on any cluster in the project. For complete documentation on configuring Encryption at Rest, see Encryption at Rest using Customer Key Management. Requires M10 or greater. and for legacy backups, backup_enabled, to be false or omitted. Note: Atlas encrypts all cluster storage and snapshot volumes, securing all cluster data on disk: a concept known as encryption at rest, by default."
+  type        = string
+  default     = "NONE"
+}
+
+############################
+## Encryption at rest
+############################
+variable "enabled" {
+  description = "Specifies whether Encryption at Rest is enabled for an Atlas project, To disable Encryption at Rest, pass only this parameter with a value of false, When you disable Encryption at Rest, Atlas also removes the configuration details."
+  default     = false
+  type        = bool
+}
+
+variable "customer_master_key_id" {
+  description = "The AWS customer master key used to encrypt and decrypt the MongoDB master keys."
+  type        = string
+  default     = ""
+}
+
+variable "role_id" {
+  description = "ID of an AWS IAM role authorized to manage an AWS customer master key. To find the ID for an existing IAM role check the role_id attribute of the mongodbatlas_cloud_provider_access resource"
+  type        = string
+  default     = ""
+}
+
+variable "iam_assumed_role_arn" {
+  description = "ARN of the IAM Role that Atlas assumes when accessing resources in your AWS account. This value is required after the creation (register of the role) as part of Set Up Unified AWS Access."
+  type        = string
+  default     = ""
+}
+#######################################
+### Cloud Backup Schedule
+#######################################
+variable "reference_hour_of_day" {
+  description = "UTC Hour of day between 0 and 23, inclusive, representing which hour of the day that Atlas takes snapshots for backup policy items."
+  type        = number
+  default     = 3
+}
+variable "reference_minute_of_hour" {
+  description = ") UTC Minutes after reference_hour_of_day that Atlas takes snapshots for backup policy items. Must be between 0 and 59, inclusive."
+  type        = number
+  default     = 45
+}
+variable "restore_window_days" {
+  description = "Number of days back in time you can restore to with point-in-time accuracy. Must be a positive, non-zero integer."
+  type        = number
+  default     = 4
+}
+variable "hourly_reference_hour_of_day" {
+  description = "UTC Hour of day between 0 and 23, inclusive, representing which hour of the day that Atlas takes snapshots for backup policy items."
+  type        = number
+  default     = null
+}
+variable "hourly_reference_minute_of_hour" {
+  description = ") UTC Minutes after reference_hour_of_day that Atlas takes snapshots for backup policy items. Must be between 0 and 59, inclusive."
+  type        = number
+  default     = null
+}
+variable "hourly_restore_window_days" {
+  description = "Number of days back in time you can restore to with point-in-time accuracy. Must be a positive, non-zero integer."
+  type        = number
+  default     = null
+}
+variable "daily_reference_minute_of_hour" {
+  description = ") UTC Minutes after reference_hour_of_day that Atlas takes snapshots for backup policy items. Must be between 0 and 59, inclusive."
+  type        = number
+  default     = null
+}
+variable "daily_restore_window_days" {
+  description = "Number of days back in time you can restore to with point-in-time accuracy. Must be a positive, non-zero integer."
+  type        = number
+  default     = null
+}
+variable "daily_reference_hour_of_day" {
+  description = "UTC Hour of day between 0 and 23, inclusive, representing which hour of the day that Atlas takes snapshots for backup policy items."
+  type        = number
+  default     = null
+}
+variable "weekly_reference_minute_of_hour" {
+  description = ") UTC Minutes after reference_hour_of_day that Atlas takes snapshots for backup policy items. Must be between 0 and 59, inclusive."
+  type        = number
+  default     = null
+}
+variable "weekly_restore_window_days" {
+  description = "Number of days back in time you can restore to with point-in-time accuracy. Must be a positive, non-zero integer."
+  type        = number
+  default     = null
+}
+variable "weekly_reference_hour_of_day" {
+  description = "UTC Hour of day between 0 and 23, inclusive, representing which hour of the day that Atlas takes snapshots for backup policy items."
+  type        = number
+  default     = null
+}
+variable "monthly_reference_hour_of_day" {
+  description = "UTC Hour of day between 0 and 23, inclusive, representing which hour of the day that Atlas takes snapshots for backup policy items."
+  type        = number
+  default     = null
+}
+variable "monthly_reference_minute_of_hour" {
+  description = ") UTC Minutes after reference_hour_of_day that Atlas takes snapshots for backup policy items. Must be between 0 and 59, inclusive."
+  type        = number
+  default     = null
+}
+variable "monthly_restore_window_days" {
+  description = "Number of days back in time you can restore to with point-in-time accuracy. Must be a positive, non-zero integer."
+  type        = number
+  default     = null
+}
+
+#policy_item_hourly
+variable "hourly_backup_enabled" {
+  description = "Enable hourly backup for your cluster."
+  type        = bool
+  default     = true
+}
+
+variable "hourly_frequency_interval" {
+  description = "Desired frequency of the new backup policy item specified by frequency_type"
+  type        = number
+  default     = 1
+}
+
+variable "hourly_retention_unit" {
+  description = "Scope of the backup policy item: days, weeks, or months."
+  type        = string
+  default     = "days"
+}
+
+variable "hourly_retention_value" {
+  description = "Value to associate with retention_unit"
+  type        = number
+  default     = 1
+}
+
+#policy_item_daily
+variable "daily_backup_enabled" {
+  description = "Enable hourly backup for your cluster."
+  type        = bool
+  default     = true
+}
+
+variable "daily_frequency_interval" {
+  description = "Desired frequency of the new backup policy item specified by frequency_type"
+  type        = number
+  default     = 1
+}
+
+variable "daily_retention_unit" {
+  description = "Scope of the backup policy item: days, weeks, or months."
+  type        = string
+  default     = "days"
+}
+
+variable "daily_retention_value" {
+  description = "Value to associate with retention_unit"
+  type        = number
+  default     = 2
+}
+
+#policy_item_weekly
+variable "weekly_backup_enabled" {
+  description = "Enable hourly backup for your cluster."
+  type        = bool
+  default     = false
+}
+
+variable "weekly_frequency_interval" {
+  description = "Desired frequency of the new backup policy item specified by frequency_type"
+  type        = number
+  default     = 4
+}
+
+variable "weekly_retention_unit" {
+  description = "Scope of the backup policy item: days, weeks, or months."
+  type        = string
+  default     = "weeks"
+}
+
+variable "weekly_retention_value" {
+  description = "Value to associate with retention_unit"
+  type        = number
+  default     = 3
+}
+
+#policy_item_monthly
+variable "monthly_backup_enabled" {
+  description = "Enable hourly backup for your cluster."
+  type        = bool
+  default     = false
+}
+variable "monthly_frequency_interval" {
+  description = "Desired frequency of the new backup policy item specified by frequency_type"
+  type        = number
+  default     = 5
+}
+
+variable "monthly_retention_unit" {
+  description = "Scope of the backup policy item: days, weeks, or months."
+  type        = string
+  default     = "months"
+}
+
+variable "monthly_retention_value" {
+  description = "Value to associate with retention_unit"
+  type        = number
+  default     = 4
 }
