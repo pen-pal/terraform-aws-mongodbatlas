@@ -179,37 +179,6 @@ variable "security_group_ids" {
   default     = []
 }
 
-#Example of db_users
-#db_users = {
-#  test_user1 = {      #user
-#    test_cluster1 = { #cluster
-#      db_name = ["db_a", "db_b", "db_c"]
-#      db_role = ["readWrite", "read", "readWrite"]
-#      db_type = [["CLUSTER"], ["DATALAKE"], ["CLUSTER", "DATALAKE"]]
-#    },
-#    test_cluster2 = {
-#      db_name = ["db_a", "db_b", "db_c"]
-#      db_role = ["readWrite", "read", "readWrite"]
-#      #db_type = ["CLUSTER", "CLUSTER", "CLUSTER"]
-#      db_type = [["CLUSTER", "DATALAKE"], ["CLUSTER", "DATALAKE"], ["CLUSTER", "DATALAKE"]]
-#    }
-#  },
-#  test_user2 = {
-#    test_cluster1 = {
-#      db_name = ["db_d", "db_e", "db_f"]
-#      db_role = ["readWrite", "readWrite", "read"]
-#      #db_type = [["CLUSTER", "DATALAKE"], ["CLUSTER", "DATALAKE"], ["CLUSTER", "DATALAKE"]]
-#      db_type = [["CLUSTER", "DATALAKE"], ["CLUSTER", "DATALAKE"], ["CLUSTER"]]
-#    },
-#    test_cluster2 = {
-#      db_name = ["db_d", "db_e", "db_f"]
-#      db_role = ["readWrite", "readWrite", "read"]
-#      db_type = [["CLUSTER", "DATALAKE"], ["CLUSTER", "DATALAKE"], ["CLUSTER", "DATALAKE"]]
-#      #db_type = ["CLUSTER", "CLUSTER", "CLUSTER"]
-#    }
-#  }
-#}
-
 #NOTE: Required if autoScaling.compute.enabled is true.
 variable "provider_auto_scaling_compute_max_instance_size" {
   description = "Maximum instance size to which your cluster can automatically scale (e.g., M40)."
