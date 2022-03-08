@@ -196,3 +196,32 @@ variable "security_group_ids" {
 #    }
 #  }
 #}
+
+#NOTE: Required if autoScaling.compute.enabled is true.
+variable "provider_auto_scaling_compute_max_instance_size" {
+  description = "Maximum instance size to which your cluster can automatically scale (e.g., M40)."
+  type        = string
+  default     = ""
+}
+
+variable "provider_auto_scaling_compute_min_instance_size" {
+  description = "Minimum instance size to which your cluster can automatically scale (e.g., M10)."
+  type        = string
+  default     = ""
+}
+
+#NOTE: If auto_scaling_compute_enabled is true, then Atlas will automatically scale up to the maximum provided and down to the minimum, if provided. This will cause the value of provider_instance_size_name returned to potential be different than what is specified in the Terraform config and if one then applies a plan, not noting this, Terraform will scale the cluster back down to the original instanceSizeName value. To prevent this a lifecycle customization should be used, i.e.:
+# lifecycle { ignore_changes = [provider_instance_size_name] }
+# But in order to explicitly change provider_instance_size_name comment the lifecycle block and run terraform apply. Please ensure to uncomment it to prevent any accidental changes.
+variable "auto_scaling_compute_enabled" {
+  description = "Specifies whether cluster tier auto-scaling is enabled. The default is false. Set to true to enable cluster tier auto-scaling. Set to false to disable cluster tier auto-scaling. "
+  type        = bool
+  default     = false
+}
+
+#This option is only available if autoScaling.compute.enabled is true.
+variable "auto_scaling_compute_scale_down_enabled" {
+  description = "Specifies whether cluster tier auto-scaling is enabled. The default is false. Set to true to enable cluster tier to scale down."
+  type        = bool
+  default     = false
+}
