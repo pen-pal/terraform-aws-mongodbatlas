@@ -26,14 +26,15 @@ variable "org_id" {
 
 variable "teams" {
   description = "An object that contains all the groups that should be created in the project"
-  type        = map(any)
+  type        = any
   default     = {}
 }
 
 variable "white_lists" {
   description = "An object that contains all the network white-lists that should be created in the project"
   type        = map(any)
-  default     = {}
+  #default     = {}
+  default = { "example" : "202.51.88.91/32" }
 }
 
 variable "region" {

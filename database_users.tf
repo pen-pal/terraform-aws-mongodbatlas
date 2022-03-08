@@ -2,6 +2,7 @@
 ### RANDOM PASSWORD FOR DATABASE USERS
 ########################################
 resource "random_password" "password" {
+  #count            = length(local.db_users_flat)
   length           = 16
   special          = true
   override_special = "_%!+"
@@ -21,9 +22,9 @@ resource "mongodbatlas_database_user" "user" {
     }
   }
   dynamic "scopes" {
-    for_each = range(length(each.value.cluster.db_type))
+    for_each = range(length(each.value.cluster.clustername))
     content {
-      name = each.value.clustername
+      name = each.value.cluster.clustername[scopes.key]
       type = each.value.cluster.db_type[scopes.key]
     }
   }

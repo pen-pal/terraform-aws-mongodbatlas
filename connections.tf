@@ -34,28 +34,28 @@ resource "mongodbatlas_project_ip_access_list" "whitelists" {
 #  auto_accept               = true
 #}
 
-resource "mongodbatlas_privatelink_endpoint" "default" {
-  for_each      = var.create_privatelink_endpoint == true ? 1 : 0
-  project_id    = mongodbatlas_project.project.id
-  provider_name = local.cloud_provider
-  region        = var.region
-}
-
-resource "aws_vpc_endpoint" "ptfe_service" {
-  for_each          = var.create_privatelink_endpoint == true ? 1 : 0
-  vpc_id            = var.vpc_id
-  service_name      = mongodbatlas_privatelink_endpoint.default.endpoint_service_name
-  vpc_endpoint_type = var.vpc_endpoint_type
-  subnet_ids        = var.subnet_ids
-  #subnet_ids         = ["subnet-de0406d2"]
-  security_group_ids = var.security_group_ids
-  #security_group_ids = ["sg-3f238186"]
-}
-
-resource "mongodbatlas_privatelink_endpoint_service" "test" {
-  for_each            = var.create_privatelink_endpoint == true ? 1 : 0
-  project_id          = mongodbatlas_privatelink_endpoint.test.project_id
-  private_link_id     = mongodbatlas_privatelink_endpoint.test.private_link_id
-  endpoint_service_id = aws_vpc_endpoint.ptfe_service.id
-  provider_name       = "AWS"
-}
+#resource "mongodbatlas_privatelink_endpoint" "default" {
+#  for_each      = var.create_privatelink_endpoint == true ? 1 : 0
+#  project_id    = mongodbatlas_project.project.id
+#  provider_name = local.cloud_provider
+#  region        = var.region
+#}
+#
+#resource "aws_vpc_endpoint" "ptfe_service" {
+#  for_each          = var.create_privatelink_endpoint == true ? 1 : 0
+#  vpc_id            = var.vpc_id
+#  service_name      = mongodbatlas_privatelink_endpoint.default.endpoint_service_name
+#  vpc_endpoint_type = var.vpc_endpoint_type
+#  subnet_ids        = var.subnet_ids
+#  #subnet_ids         = ["subnet-de0406d2"]
+#  security_group_ids = var.security_group_ids
+#  #security_group_ids = ["sg-3f238186"]
+#}
+#
+#resource "mongodbatlas_privatelink_endpoint_service" "test" {
+#  for_each            = var.create_privatelink_endpoint == true ? 1 : 0
+#  project_id          = mongodbatlas_privatelink_endpoint.test.project_id
+#  private_link_id     = mongodbatlas_privatelink_endpoint.test.private_link_id
+#  endpoint_service_id = aws_vpc_endpoint.ptfe_service.id
+#  provider_name       = "AWS"
+#}
