@@ -1,0 +1,108 @@
+cloud_provider               = "AWS"
+cluster_type                 = "REPLICASET"
+volume_type                  = "STANDARD"
+region                       = "EU_WEST_1"
+cluster_name                 = "test"
+instance_type                = "M10"
+mongodb_major_ver            = 5.0
+num_shards                   = 3
+backup_enabled               = false
+pit_enabled                  = false
+auto_scaling_disk_gb_enabled = false
+org_id                       = ""
+project_name                 = "test"
+white_lists = {
+  "example comment" : "0.0.0.0/0"
+}
+aws_rgion = "eu-west-1"
+replication_factor = 3
+#NOTE: Set this to true for M0 cluster if you have credit card associated to MongoDB else set it to false as it cannot be enabled unless credit card is associated
+cloud_backup = false
+#NOTE: Set this to true for M0 cluster if you have credit card associated to MongoDB else set it to false as it cannot be enabled unless credit card is associated
+#pit_enabled  = false
+disk_size_gb = 10
+#auto_scaling_disk_gb_enabled = true
+#volume_type = "STANDARD"
+#provider_disk_iops =
+#vpc_peer =
+#create_privatelink_endpoint =
+#vpc_id =
+#vpc_endpoint_type =
+#subnet_ids =
+#security_group_ids =
+#NOTE: Required if autoScaling.compute.enabled is true.
+provider_auto_scaling_compute_max_instance_size = "M40"
+provider_auto_scaling_compute_min_instance_size = "M10"
+#NOTE: If auto_scaling_compute_enabled is true, then Atlas will automatically scale up to the maximum provided and down to the minimum, if provided. This will cause the value of provider_instance_size_name returned to potential be different than what is specified in the Terraform config and if one then applies a plan, not noting this, Terraform will scale the cluster back down to the original instanceSizeName value. To prevent this a lifecycle customization should be used, i.e.:
+# lifecycle { ignore_changes = [provider_instance_size_name] }
+# But in order to explicitly change provider_instance_size_name comment the lifecycle block and run terraform apply. Please ensure to uncomment it to prevent any accidental changes.
+auto_scaling_compute_enabled = true
+#This option is only available if autoScaling.compute.enabled is true.
+auto_scaling_compute_scale_down_enabled = true
+encryption_at_rest_provider             = "AWS"
+############################
+## Encryption at rest
+############################
+enabled                = true
+customer_master_key_id = ""
+#######################################
+### Cloud Backup Schedule
+#######################################
+reference_hour_of_day    = 3
+reference_minute_of_hour = 45
+restore_window_days      = 4
+#policy_item_hourly
+hourly_backup_enabled     = true
+hourly_frequency_interval = 1
+hourly_retention_unit     = "days"
+hourly_retention_value    = 1
+#policy_item_daily
+daily_backup_enabled = false
+#daily_frequency_interval =
+#daily_retention_unit =
+#daily_retention_value =
+#policy_item_weekly
+weekly_backup_enabled = false
+#weekly_frequency_interval =
+#weekly_retention_unit =
+#weekly_retention_value =
+#policy_item_monthly
+monthly_backup_enabled = false
+#monthly_frequency_interval = 5
+#monthly_retention_unit = "months"
+#monthly_retention_value = 4
+#
+#teams = {
+#  Devops = {
+#    users        = ["user1@email.com"]
+#    org_role     = ["ORG_OWNER"]
+#    project_role = ["GROUP_OWNER"]
+#  },
+#  DevTeam = {
+#    users        = ["user3@email.com", "user4@email.com"]
+#    org_role     = ["ORG_MEMBER", "ORG_OWNER"]
+#    project_role = ["GROUP_DATA_ACCESS_READ_ONLY", "GROUP_READ_ONLY"]
+#  }
+#}
+#db_users = {
+#  user_list = {    #some_list
+#    test-user1 = { #user
+#      db_name     = ["db_a", "db_b"]
+#      db_role     = ["readWrite", "read"]
+#      db_type     = ["CLUSTER"]
+#      clustername = ["test"]
+#    },
+#    test-user2 = { #user
+#      db_name     = ["db_d", "db_e"]
+#      db_role     = ["readWrite", "readWrite"]
+#      db_type     = ["CLUSTER", "CLUSTER", "CLUSTER"]
+#      clustername = ["test", "test-1", "test-2"]
+#    },
+#    test-user3 = { #user
+#      db_name     = ["db_c", "db_g", "db_a"]
+#      db_role     = ["readWrite", "read", "dbAdmin"]
+#      db_type     = ["CLUSTER", "CLUSTER", "CLUSTER"]
+#      clustername = ["test-2", "test-5", "test-7"]
+#    }
+#  }
+#}
