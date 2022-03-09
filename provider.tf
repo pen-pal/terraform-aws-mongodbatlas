@@ -4,6 +4,4 @@ provider "aws" {
 }
 
 provider "mongodbatlas" {
-  public_key  = "dltaamtg"
-  private_key  = "d3a9a83e-4b00-4b98-a430-14fb9518c1b8"
 }
