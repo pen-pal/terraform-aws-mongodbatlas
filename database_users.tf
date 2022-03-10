@@ -28,4 +28,10 @@ resource "mongodbatlas_database_user" "user" {
       type = each.value.cluster.db_type[scopes.key]
     }
   }
+
+  depends_on = [
+    mongodbatlas_project.project,
+    mongodbatlas_cluster.cluster,
+    random_password.password
+  ]
 }
