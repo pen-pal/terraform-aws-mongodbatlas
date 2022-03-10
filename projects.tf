@@ -30,4 +30,9 @@ resource "mongodbatlas_project" "project" {
     #}
   }
 
+
+  depends_on = [
+    mongodbatlas_teams.team
+  ]
+
 }
