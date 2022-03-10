@@ -13,11 +13,16 @@ variable "mongodbatlas_private_key" {
 }
 
 variable "cloud_provider" {
-  description = "provider to use"
+  description = "Cloud service provider on which the servers are provisioned. The possible values are: AWS, GCP, AZURE, and (... TENANT - A multi-tenant deployment on one of the supported cloud service providers. Only valid when providerSettings.instanceSizeName is either M2 or M5. ...)"
   type        = string
   default     = "AWS"
 }
 
+variable "backing_provider_name" {
+  description = "Cloud service provider on which the server for a multi-tenant cluster is provisioned. This setting is only valid when providerSetting.providerName is TENANT and providerSetting.instanceSizeName is M2 or M5. The possible values are: AWS, GCP, AZURE"
+  type        = string
+  default     = "AWS"
+}
 
 variable "project_name" {
   description = "The name of the project you want to create"
@@ -86,12 +91,29 @@ variable "num_shards" {
   default     = 1
 }
 
+variable "num_shards_replicaset" {
+  description = " Number of shards to deploy in the specified zone, minimum 1."
+  type        = number
+  default     = 2
+}
+
 variable "replication_factor" {
   description = " Number of replica set members. Each member keeps a copy of your databases, providing high availability and data redundancy. The possible values are 3, 5, or 7. The default value is 3."
   type        = number
   default     = null
 }
 
+#variable "replication_specs_replicaset" {
+variable "replication_specs" {
+  description = "An object that contains all the groups that should be created in the project"
+  type        = list(map(any))
+  default     = null
+}
+variable "replication_specs_sharded" {
+  description = "An object that contains all the groups that should be created in the project"
+  type        = list(map(any))
+  default     = null
+}
 
 #NOTE: Set this to true for M0 cluster if you have credit card associated to MongoDB else set it to false as it cannot be enabled unless credit card is associated
 variable "cloud_backup" {
@@ -416,4 +438,10 @@ variable "monthly_retention_value" {
   description = "Value to associate with retention_unit"
   type        = number
   default     = 4
+}
+
+variable "labels" {
+  description = "Key-value pairs that tag and categorize the cluster. Each key and value has a maximum length of 255 characters. You cannot set the key Infrastructure Tool, it is used for internal purposes to track aggregate usage."
+  type        = map(any) #list(map(string))
+  default     = {}       #[{}]
 }
