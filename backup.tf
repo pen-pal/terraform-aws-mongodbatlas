@@ -1,8 +1,8 @@
 resource "mongodbatlas_cloud_backup_schedule" "hourly" {
-  count = var.hourly_backup_enabled == true ? 1 : 0
+  count = var.create && local.free_tier == false && var.hourly_backup_enabled ? 1 : 0
 
-  project_id   = mongodbatlas_project.project.id
-  cluster_name = mongodbatlas_cluster.cluster.name
+  project_id   = mongodbatlas_project.project[0].id
+  cluster_name = var.cluster_type == "REPLICASET" || local.free_tier || local.sharding ? mongodbatlas_cluster.replicaset[0].name : mongodbatlas_cluster.sharded[0].name
 
   reference_hour_of_day    = var.hourly_reference_hour_of_day != null ? var.hourly_reference_hour_of_day : var.reference_hour_of_day
   reference_minute_of_hour = var.hourly_reference_minute_of_hour != null ? var.hourly_reference_minute_of_hour : var.reference_minute_of_hour
@@ -18,9 +18,9 @@ resource "mongodbatlas_cloud_backup_schedule" "hourly" {
 }
 
 resource "mongodbatlas_cloud_backup_schedule" "daily" {
-  count        = var.daily_backup_enabled == true ? 1 : 0
-  project_id   = mongodbatlas_project.project.id
-  cluster_name = mongodbatlas_cluster.cluster.name
+  count        = var.create && local.free_tier == false && var.daily_backup_enabled ? 1 : 0
+  project_id   = mongodbatlas_project.project[0].id
+  cluster_name = var.cluster_type == "REPLICASET" || local.free_tier || local.sharding ? mongodbatlas_cluster.replicaset[0].name : mongodbatlas_cluster.sharded[0].name
 
   reference_hour_of_day    = var.daily_reference_hour_of_day != null ? var.daily_reference_hour_of_day : var.reference_hour_of_day
   reference_minute_of_hour = var.daily_reference_minute_of_hour != null ? var.daily_reference_minute_of_hour : var.reference_minute_of_hour
@@ -35,9 +35,9 @@ resource "mongodbatlas_cloud_backup_schedule" "daily" {
   }
 }
 resource "mongodbatlas_cloud_backup_schedule" "weekly" {
-  count        = var.weekly_backup_enabled == true ? 1 : 0
-  project_id   = mongodbatlas_project.project.id
-  cluster_name = mongodbatlas_cluster.cluster.name
+  count        = var.create && local.free_tier == false && var.weekly_backup_enabled ? 1 : 0
+  project_id   = mongodbatlas_project.project[0].id
+  cluster_name = var.cluster_type == "REPLICASET" || local.free_tier || local.sharding ? mongodbatlas_cluster.replicaset[0].name : mongodbatlas_cluster.sharded[0].name
 
   reference_hour_of_day    = var.weekly_reference_hour_of_day != null ? var.weekly_reference_hour_of_day : var.reference_hour_of_day
   reference_minute_of_hour = var.weekly_reference_minute_of_hour != null ? var.weekly_reference_minute_of_hour : var.reference_minute_of_hour
@@ -52,9 +52,9 @@ resource "mongodbatlas_cloud_backup_schedule" "weekly" {
   }
 }
 resource "mongodbatlas_cloud_backup_schedule" "monthly" {
-  count        = var.monthly_backup_enabled == true ? 1 : 0
-  project_id   = mongodbatlas_project.project.id
-  cluster_name = mongodbatlas_cluster.cluster.name
+  count        = var.create && local.free_tier == false && var.monthly_backup_enabled ? 1 : 0
+  project_id   = mongodbatlas_project.project[0].id
+  cluster_name = var.cluster_type == "REPLICASET" || local.free_tier || local.sharding ? mongodbatlas_cluster.replicaset[0].name : mongodbatlas_cluster.sharded[0].name
 
   reference_hour_of_day    = var.monthly_reference_hour_of_day != null ? var.monthly_reference_hour_of_day : var.reference_hour_of_day
   reference_minute_of_hour = var.monthly_reference_minute_of_hour != null ? var.monthly_reference_minute_of_hour : var.reference_minute_of_hour
