@@ -7,45 +7,24 @@ locals {
       for user, data in users :
       "${lists}-${user}" => {
         username = user
-        #clustertype = clustertype
-        #clustername = clustername
-        cluster = data
+        cluster  = data
       }
     }
   ]...) # please do NOT remove the dots
-}
 
-#
-#output "val" {
-#  value = local.db_users_flat
-#}
-#
-#output "v" {
-#  value = local.teams_flat
-#}
-#
-#output "a" {
-#  value = local.sets
-#}
-#
-##output "ty" {
-##  value = local.new
-##}
-#
-#output "teams" {
-#  value = local.teams_id
-#}
-#
-#
-##output "tfeam-id-with-teams" {
-##  value = local.final
-##}
-##
-##output "new" {
-##  value = local.new
-##}
-#
-#
-#output "stg" {
-#  value = local.users
-#}
+  free_tier             = substr(var.instance_type, 1, length(var.instance_type)) < substr("M10", 1, length("M10")) || var.cloud_provider == "TENANT"
+  provider_name         = local.free_tier ? "TENANT" : var.cloud_provider
+  backing_provider_name = local.free_tier || local.provider_name == "TENANT" ? var.backing_provider_name : ""
+  cluster_type          = var.cluster_type == "REPLICASET" || (substr(var.instance_type, 1, length(var.instance_type)) < substr("M30", 1, length("M30"))) ? "REPLICASET" : var.cluster_type
+  sharding              = substr(var.instance_type, 1, length(var.instance_type)) < substr("M30", 1, length("M30"))
+
+  replication_specs = [
+    {
+      electable_nodes = var.electable_nodes
+      priority        = var.priority
+      read_only_nodes = var.read_only_nodes
+      region_name     = var.region
+    }
+  ]
+
+}
