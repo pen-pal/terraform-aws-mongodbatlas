@@ -1,4 +1,10 @@
 #can be exported as 'export MONGODB_ATLAS_PRIVATE_KEY="xxxx"'
+variable "create" {
+  description = "Flag to ensuer either to create or not  create the resource"
+  type        = bool
+  default     = true
+}
+
 variable "mongodbatlas_public_key" {
   description = "This is the public key of your MongoDB Atlas '' API key pair"
   type        = string
@@ -42,7 +48,13 @@ variable "teams" {
   default     = {}
 }
 
-variable "white_lists" {
+variable "db_users" {
+  description = "An object that contains all the groups that should be created in the project"
+  type        = map(any)
+  default     = {}
+}
+
+variable "whitelists" {
   description = "An object that contains all the network white-lists that should be created in the project"
   type        = map(any)
   #default     = {}
@@ -52,13 +64,13 @@ variable "white_lists" {
 variable "region" {
   description = "The AWS region-name that the cluster will be deployed on"
   type        = string
-  default     = "EU_WEST_1"
+  default     = "US_EAST_1"
 }
 
 variable "aws_region" {
   description = "The AWS region-name that the AWS KMS KEY, Private Link, and other resides on"
   type        = string
-  default     = "eu-west-1"
+  default     = "us-east-1"
 }
 
 variable "cluster_name" {
@@ -115,6 +127,29 @@ variable "replication_specs_sharded" {
   default     = null
 }
 
+variable "electable_nodes" {
+  description = "Number of electable nodes for Atlas to deploy to the region. Electable nodes can become the primary and can facilitate local reads. The total number of electableNodes across all replication spec regions must total 3, 5, or 7. Specify 0 if you do not want any electable nodes in the region.You cannot create electable nodes in a region if priority is 0."
+  type        = number
+  default     = 3
+}
+
+variable "priority" {
+  description = "Election priority of the region. For regions with only read-only nodes, set this value to 0. For regions where electable_nodes is at least 1, each region must have a priority of exactly one (1) less than the previous region. The first region must have a priority of 7. The lowest possible priority is 1. The priority 7 region identifies the Preferred Region of the cluster. Atlas places the primary node in the Preferred Region. Priorities 1 through 7 are exclusive - no more than one region per cluster can be assigned a given priority. Example: If you have three regions, their priorities would be 7, 6, and 5 respectively. If you added two more regions for supporting electable nodes, the priorities of those regions would be 4 and 3 respectively."
+  type        = number
+  default     = 7
+}
+
+variable "read_only_nodes" {
+  description = "Number of read-only nodes for Atlas to deploy to the region. Read-only nodes can never become the primary, but can facilitate local-reads. Specify 0 if you do not want any read-only nodes in the region."
+  type        = number
+  default     = 0
+}
+
+variable "analytics_nodes" {
+  description = "The number of analytics nodes for Atlas to deploy to the region. Analytics nodes are useful for handling analytic data such as reporting queries from BI Connector for Atlas. Analytics nodes are read-only, and can never become the primary. If you do not specify this option, no analytics nodes are deployed to the region."
+  type        = number
+  default     = 0
+}
 #NOTE: Set this to true for M0 cluster if you have credit card associated to MongoDB else set it to false as it cannot be enabled unless credit card is associated
 variable "cloud_backup" {
   description = "Flag indicating if the cluster uses Cloud Backup for backups. Deprecated use cloud_backup instead."
@@ -159,47 +194,6 @@ variable "provider_disk_iops" {
   default     = null
 }
 
-variable "vpc_peer" {
-  description = "An object that contains all VPC peering requests from the cluster to AWS VPC's"
-  type        = map(any)
-  default     = {}
-}
-
-variable "create_privatelink_endpoint" {
-  description = "Either to create privatelink endpoint or not"
-  type        = bool
-  default     = false
-}
-
-variable "db_users" {
-  description = "An object that contains all the groups that should be created in the project"
-  type        = map(any)
-  default     = {}
-}
-
-variable "vpc_id" {
-  description = "The ID of the VPC in which the endpoint will be used."
-  type        = string
-  default     = ""
-}
-
-variable "vpc_endpoint_type" {
-  description = "The VPC endpoint type, Gateway, GatewayLoadBalancer, or Interface"
-  type        = string
-  default     = "Interface"
-}
-
-variable "subnet_ids" {
-  description = "The ID of one or more subnets in which to create a network interface for the endpoint. Applicable for endpoints of type GatewayLoadBalancer and Interface."
-  type        = list(string)
-  default     = []
-}
-
-variable "security_group_ids" {
-  description = "The ID of one or more security groups to associate with the network interface. Required for endpoints of type Interface."
-  type        = list(string)
-  default     = []
-}
 
 #NOTE: Required if autoScaling.compute.enabled is true.
 variable "provider_auto_scaling_compute_max_instance_size" {
@@ -239,7 +233,7 @@ variable "encryption_at_rest_provider" {
 ############################
 ## Encryption at rest
 ############################
-variable "enabled" {
+variable "encryption_enabled" {
   description = "Specifies whether Encryption at Rest is enabled for an Atlas project, To disable Encryption at Rest, pass only this parameter with a value of false, When you disable Encryption at Rest, Atlas also removes the configuration details."
   default     = false
   type        = bool
@@ -444,4 +438,100 @@ variable "labels" {
   description = "Key-value pairs that tag and categorize the cluster. Each key and value has a maximum length of 255 characters. You cannot set the key Infrastructure Tool, it is used for internal purposes to track aggregate usage."
   type        = map(any) #list(map(string))
   default     = {}       #[{}]
+}
+
+
+##########################################
+### AWS Resources
+##########################################
+variable "deletion_window_in_days" {
+  type        = number
+  default     = 30
+  description = "Duration in days after which the key is deleted after destruction of the resource"
+}
+
+variable "enable_key_rotation" {
+  type        = bool
+  default     = true
+  description = "Specifies whether key rotation is enabled"
+}
+
+variable "description" {
+  type        = string
+  default     = "Parameter Store KMS master key"
+  description = "The description of the key as viewed in AWS console"
+}
+
+variable "alias" {
+  type        = string
+  default     = ""
+  description = "The display name of the alias. The name must start with the word `alias` followed by a forward slash. If not specified, the alias name will be auto-generated."
+}
+
+variable "policy" {
+  type        = string
+  default     = ""
+  description = "A valid KMS policy JSON document. Note that if the policy document is not specific enough (but still valid), Terraform may view the policy as constantly changing in a terraform plan. In this case, please make sure you use the verbose/specific version of the policy."
+}
+
+variable "key_usage" {
+  type        = string
+  default     = "ENCRYPT_DECRYPT"
+  description = "Specifies the intended use of the key. Valid values: `ENCRYPT_DECRYPT` or `SIGN_VERIFY`."
+}
+
+variable "customer_master_key_spec" {
+  type        = string
+  default     = "SYMMETRIC_DEFAULT"
+  description = "Specifies whether the key contains a symmetric key or an asymmetric key pair and the encryption algorithms or signing algorithms that the key supports. Valid values: `SYMMETRIC_DEFAULT`, `RSA_2048`, `RSA_3072`, `RSA_4096`, `ECC_NIST_P256`, `ECC_NIST_P384`, `ECC_NIST_P521`, or `ECC_SECG_P256K1`."
+}
+
+variable "multi_region" {
+  type        = bool
+  default     = false
+  description = "Indicates whether the KMS key is a multi-Region (true) or regional (false) key."
+}
+
+variable "vpc_peer" {
+  description = "An object that contains all VPC peering requests from the cluster to AWS VPC's"
+  type        = map(any)
+  default     = {}
+}
+
+variable "create_privatelink_endpoint" {
+  description = "Either to create privatelink endpoint or not"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_id" {
+  description = "The ID of the VPC in which the endpoint will be used."
+  type        = string
+  default     = ""
+}
+
+variable "vpc_endpoint_type" {
+  description = "The VPC endpoint type, Gateway, GatewayLoadBalancer, or Interface"
+  type        = string
+  default     = "Interface"
+}
+
+variable "subnet_ids" {
+  description = "The ID of one or more subnets in which to create a network interface for the endpoint. Applicable for endpoints of type GatewayLoadBalancer and Interface."
+  type        = list(string)
+  default     = []
+}
+
+variable "security_group_ids" {
+  description = "The ID of one or more security groups to associate with the network interface. Required for endpoints of type Interface."
+  type        = list(string)
+  default     = []
+}
+
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+
 }
