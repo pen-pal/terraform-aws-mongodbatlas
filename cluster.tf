@@ -7,7 +7,7 @@ resource "mongodbatlas_cluster" "sharded" {
   name                        = var.cluster_name
   provider_name               = local.provider_name
   backing_provider_name       = local.backing_provider_name
-  provider_region_name        = var.region
+  provider_region_name        = var.atlas_region
   provider_instance_size_name = var.instance_type
   mongo_db_major_version      = var.mongodb_major_ver
   cluster_type                = local.free_tier ? "REPLICASET" : local.cluster_type
@@ -68,7 +68,7 @@ resource "mongodbatlas_cluster" "replicaset" {
   name                        = var.cluster_name
   provider_name               = local.provider_name
   backing_provider_name       = local.backing_provider_name
-  provider_region_name        = var.region
+  provider_region_name        = var.atlas_region
   provider_instance_size_name = var.instance_type
   mongo_db_major_version      = var.mongodb_major_ver
   cluster_type                = local.free_tier ? "REPLICASET" : local.cluster_type

@@ -61,7 +61,7 @@ variable "whitelists" {
   default = { "example" : "202.51.88.91/32" }
 }
 
-variable "region" {
+variable "atlas_region" {
   description = "The AWS region-name that the cluster will be deployed on"
   type        = string
   default     = "US_EAST_1"

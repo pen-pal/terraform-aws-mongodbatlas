@@ -23,7 +23,7 @@ locals {
       electable_nodes = var.electable_nodes
       priority        = var.priority
       read_only_nodes = var.read_only_nodes
-      region_name     = var.region
+      region_name     = var.atlas_region
     }
   ]
 

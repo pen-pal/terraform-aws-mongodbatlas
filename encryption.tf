@@ -9,7 +9,7 @@ resource "mongodbatlas_encryption_at_rest" "encryption" {
   aws_kms_config {
     enabled                = var.encryption_enabled
     customer_master_key_id = var.customer_master_key_id == "" ? aws_kms_key.default[0].key_id : var.customer_master_key_id
-    region                 = var.region #atlas region (this region should have your kms key in AWS)
+    region                 = var.atlas_region #atlas region (this region should have your kms key in AWS)
     role_id                = mongodbatlas_cloud_provider_access_authorization.auth_role[0].role_id
   }
 

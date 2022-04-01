@@ -74,7 +74,7 @@ resource "mongodbatlas_privatelink_endpoint" "default" {
   count         = local.free_tier == false && var.create && var.create_privatelink_endpoint == true ? 1 : 0
   project_id    = mongodbatlas_project.project[0].id
   provider_name = local.cloud_provider
-  region        = var.region
+  region        = var.aws_region
 }
 
 resource "aws_vpc_endpoint" "ptfe_service" {
